@@ -1,0 +1,24 @@
+{
+  "name": "pokedex",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build:core": "npm run build -w @pokedex/core",
+    "cli": "npm run build:core && npm run dev -w @pokedex/cli",
+    "web": "npm run build:core && npm run dev -w @pokedex/web",
+    "db:migrate": "npm run db:migrate -w @pokedex/core --",
+    "db:generate": "npm run db:generate -w @pokedex/core",
+    "db:studio": "npm run db:studio -w @pokedex/core",
+    "watch:core": "tsc --watch -p packages/core"
+
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "typescript": "^7.0.2"
+  }
+}

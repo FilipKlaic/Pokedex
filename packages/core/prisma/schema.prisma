@@ -1,0 +1,18 @@
+generator client {
+  provider                = "prisma-client"
+  output                  = "../src/generated/prisma"
+  moduleFormat            = "esm"
+  importFileExtenstion    = "js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model CaughtPokemon {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  pokedexId Int
+  data      Json
+  caughtAt  DateTime @default(now())
+}

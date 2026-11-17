@@ -1,0 +1,19 @@
+node_modules
+
+# Keep environment variables out of version control (.env.example is the template)
+.env
+.env.*
+!.env.example
+
+# Build output and generated code
+dist
+.next
+*.tsbuildinfo
+packages/core/src/generated
+
+# AI-assistant files (local only)
+.agents/
+.claude/
+.windsurf/
+skills-lock.json
+apps/web/AGENTS.md

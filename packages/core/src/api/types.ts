@@ -1,0 +1,92 @@
+export type NamedAPIResource = {
+  name: string;
+  url: string;
+};
+
+export type NamedAPIResourceList = {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: NamedAPIResource[];
+};
+
+export type ShallowLocations = {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: NamedAPIResource[];
+};
+
+export type LocationArea = {
+  id: number;
+  name: string;
+  pokemon_encounters: {
+    pokemon: NamedAPIResource;
+  }[];
+};
+
+export type Pokemon = {
+  id: number;
+  name: string;
+  base_experience: number | null;
+  height: number;
+  weight: number;
+  species: NamedAPIResource;
+  sprites: {
+    front_default: string | null;
+    front_shiny: string | null;
+  };
+  stats: {
+    base_stat: number;
+    stat: NamedAPIResource;
+  }[];
+  types: {
+    slot: number;
+    type: NamedAPIResource;
+  }[];
+};
+
+export type PokemonSpecies = {
+  id: number;
+  name: string;
+  evolution_chain: { url: string } | null;
+  varieties: {
+    is_default: boolean;
+    pokemon: NamedAPIResource;
+  }[];
+};
+
+export type Generation = {
+  id: number;
+  name: string;
+  pokemon_species: NamedAPIResource[];
+};
+
+export type EvolutionChain = {
+  id: number;
+  chain: ChainLink;
+};
+
+export type ChainLink = {
+  species: NamedAPIResource;
+  evolution_details: EvolutionDetail[];
+  evolves_to: ChainLink[];
+};
+
+export type EvolutionDetail = {
+  trigger: NamedAPIResource;
+  min_level: number | null;
+  min_happiness: number | null;
+  item: NamedAPIResource | null;
+  time_of_day: string;
+};
+
+export type TypeInfo = {
+  id: number;
+  name: string;
+  damage_relations: {
+    double_damage_from: NamedAPIResource[];
+    half_damage_from: NamedAPIResource[];
+    no_damage_from: NamedAPIResource[];
+  };
+};
