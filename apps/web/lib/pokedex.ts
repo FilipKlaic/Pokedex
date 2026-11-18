@@ -5,8 +5,6 @@ import { PokedexRepository } from "@pokedex/core/db/pokedex";
 
 const repository = new PokedexRepository(prisma);
 
-// Every function awaits io() first. It tells Next.js that real I/O follows, so
-// the database is only queried at request time, never while prerendering.
 
 export async function listCaughtPokemon(): Promise<Pokemon[]> {
   await io();
@@ -21,4 +19,9 @@ export async function listCaughtNames(): Promise<string[]> {
 export async function isCaught(name: string): Promise<boolean> {
   await io();
   return repository.has(name);
+}
+
+export async function addToPokedex(pokemon: Pokemon): Promise<void> {
+  await io();
+  await repository.add(pokemon);
 }

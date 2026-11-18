@@ -89,4 +89,8 @@ export type TypeInfo = {
     half_damage_from: NamedAPIResource[];
     no_damage_from: NamedAPIResource[];
   };
+  pokemon: {
+    slot: number;
+    pokemon: NamedAPIResource;
+  }[];
 };

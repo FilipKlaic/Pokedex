@@ -1,6 +1,6 @@
 node_modules
 
-# Keep environment variables out of version control (.env.example is the template)
+# Keep environment variables out of version control
 .env
 .env.*
 !.env.example
@@ -11,7 +11,6 @@ dist
 *.tsbuildinfo
 packages/core/src/generated
 
-# AI-assistant files (local only)
 .agents/
 .claude/
 .windsurf/

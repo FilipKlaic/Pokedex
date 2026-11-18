@@ -1,12 +1,12 @@
 import { cacheLife } from "next/cache";
 import { PokeAPI, PokeAPIError } from "@pokedex/core/api/pokeapi";
+import type { PokemonTypeName } from "@pokedex/core/api/pokemon-types";
 import type { ChainLink, NamedAPIResource, Pokemon } from "@pokedex/core/api/types";
 import { idFromResourceURL } from "@pokedex/core/api/urls";
 import { defensiveMultipliers, groupByMultiplier } from "@pokedex/core/logic/matchups";
 
 const api = new PokeAPI(5 * 60 * 1000);
 
-/** Just enough to show a tile: Pokédex number and name. */
 export type PokemonSummary = {
   id: number;
   name: string;
@@ -17,10 +17,6 @@ export type GenerationSummary = {
   label: string;
 };
 
-/**
- * One Pokémon, or null if PokéAPI doesn't know the name. Also accepts a species
- * name whose default form is called something longer ("deoxys" → "deoxys-normal").
- */
 export async function getPokemon(name: string): Promise<Pokemon | null> {
   "use cache";
   cacheLife("days");
@@ -47,7 +43,14 @@ export async function getAllPokemon(): Promise<PokemonSummary[]> {
   return list.results.map(toSummary);
 }
 
-/** All generations, e.g. { id: 1, label: "Gen I" }. */
+export async function getPokemonOfType(type: PokemonTypeName): Promise<PokemonSummary[]> {
+  "use cache";
+  cacheLife("days");
+
+  const typeInfo = await api.fetchType(type);
+  return typeInfo.pokemon.map((entry) => toSummary(entry.pokemon)).sort((a, b) => a.id - b.id);
+}
+
 export async function getGenerations(): Promise<GenerationSummary[]> {
   "use cache";
   cacheLife("days");
@@ -59,7 +62,6 @@ export async function getGenerations(): Promise<GenerationSummary[]> {
   }));
 }
 
-/** The Pokémon introduced in one generation, in Pokédex order, or null if it doesn't exist. */
 export async function getGenerationPokemon(id: number): Promise<PokemonSummary[] | null> {
   "use cache";
   cacheLife("days");
@@ -71,7 +73,6 @@ export async function getGenerationPokemon(id: number): Promise<PokemonSummary[]
   return generation.pokemon_species.map(toSummary).sort((a, b) => a.id - b.id);
 }
 
-/** The root of a species' evolution tree, or null if it has none. */
 export async function getEvolutionChain(speciesName: string): Promise<ChainLink | null> {
   "use cache";
   cacheLife("days");
@@ -89,7 +90,6 @@ export type MatchupGroup = {
   types: string[];
 };
 
-/** Attacking types grouped by damage multiplier, strongest weakness first. */
 export async function getDefensiveMatchups(typeNames: string[]): Promise<MatchupGroup[]> {
   "use cache";
   cacheLife("days");

@@ -1,10 +1,13 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
+import { catchChance } from "@pokedex/core/logic/catching";
+import { CatchPanel } from "@/components/catch-panel";
 import { DefensiveMatchups } from "@/components/defensive-matchups";
 import { EvolutionTree } from "@/components/evolution-tree";
 import { StatBars } from "@/components/stat-bars";
 import { TypeBadge } from "@/components/type-badge";
+import { throwPokeball } from "@/lib/actions";
 import { getDefensiveMatchups, getEvolutionChain, getPokemon } from "@/lib/pokeapi";
 import { isCaught } from "@/lib/pokedex";
 
@@ -54,15 +57,11 @@ async function PokemonDetails({ params }: Pick<PageProps<"/pokemon/[name]">, "pa
         <p className="mt-4 text-sm text-zinc-500">
           {pokemon.height / 10} m · {pokemon.weight / 10} kg
         </p>
-        <p
-          className={`mt-4 rounded-full px-3 py-1 text-sm font-medium ${
-            caught
-              ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
-              : "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400"
-          }`}
-        >
-          {caught ? "✓ In your Pokédex" : "Not caught yet"}
-        </p>
+        <CatchPanel
+          caught={caught}
+          chancePercent={Math.round(catchChance(pokemon.base_experience) * 100)}
+          throwAction={throwPokeball.bind(null, pokemon.name)}
+        />
       </header>
 
       <div className="space-y-8">
