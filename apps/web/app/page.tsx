@@ -2,18 +2,25 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { GenerationTabs } from "@/components/generation-tabs";
 import { PokemonGrid } from "@/components/pokemon-grid";
+import { GridSkeleton } from "@/components/skeletons";
 import { getGenerationPokemon, getGenerations } from "@/lib/pokeapi";
 import { listCaughtNames } from "@/lib/pokedex";
 
 export default function HomePage({ searchParams }: PageProps<"/">) {
   return (
-    <main className="mx-auto w-full max-w-5xl px-4 py-8">
-      <h1 className="text-3xl font-bold">All Pokémon</h1>
-      <p className="mb-6 text-zinc-600 dark:text-zinc-400">
-        Pick a generation, then click any Pokémon for its stats, type matchups and evolutions. A ✓
-        means it&apos;s in your Pokédex.
+    <main className="mx-auto w-full max-w-6xl px-4 py-8">
+      <h1 className="text-3xl font-bold tracking-tight">Browse</h1>
+      <p className="mb-6 mt-1 text-zinc-500">
+        Every Pokémon, one region at a time. Pick one for stats, type defenses and evolutions.
       </p>
-      <Suspense fallback={<p className="text-zinc-500">Loading Pokémon…</p>}>
+      <Suspense
+        fallback={
+          <>
+            <div className="mb-6 h-11 w-full max-w-2xl animate-pulse rounded-full bg-zinc-200/60 dark:bg-zinc-800/60" />
+            <GridSkeleton />
+          </>
+        }
+      >
         <GenerationBrowser searchParams={searchParams} />
       </Suspense>
     </main>
@@ -30,22 +37,38 @@ async function GenerationBrowser({ searchParams }: Pick<PageProps<"/">, "searchP
     listCaughtNames(),
   ]);
 
+  if (!pokemon) {
+    return (
+      <>
+        <GenerationTabs generations={generations} active={generation} />
+        <p className="text-zinc-600 dark:text-zinc-400">
+          There&apos;s no generation {generation}.{" "}
+          <Link href="/" className="font-medium underline underline-offset-2">
+            Back to the first one
+          </Link>
+        </p>
+      </>
+    );
+  }
+
+  const current = generations.find((entry) => entry.id === generation);
+  const caught = new Set(caughtNames);
+  const caughtHere = pokemon.filter((entry) => caught.has(entry.name)).length;
+
   return (
     <>
       <GenerationTabs generations={generations} active={generation} />
-      {pokemon ? (
-        <>
-          <p className="mb-4 text-sm text-zinc-500">{pokemon.length} Pokémon</p>
-          <PokemonGrid pokemon={pokemon} caughtNames={caughtNames} />
-        </>
-      ) : (
-        <p className="text-zinc-600 dark:text-zinc-400">
-          There&apos;s no generation {generation}.{" "}
-          <Link href="/" className="text-blue-600 hover:underline dark:text-blue-400">
-            Back to Gen I
-          </Link>
+      <div className="mb-4 flex items-baseline justify-between gap-4">
+        <h2 className="text-lg font-semibold">
+          {current?.region}{" "}
+          <span className="text-sm font-normal text-zinc-500">{current?.label}</span>
+        </h2>
+        <p className="text-sm text-zinc-500">
+          <span className="font-medium text-zinc-900 dark:text-white">{caughtHere}</span> /{" "}
+          {pokemon.length} caught
         </p>
-      )}
+      </div>
+      <PokemonGrid pokemon={pokemon} caughtNames={caughtNames} />
     </>
   );
 }

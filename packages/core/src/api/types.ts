@@ -35,7 +35,18 @@ export type Pokemon = {
   sprites: {
     front_default: string | null;
     front_shiny: string | null;
+    other: {
+      "official-artwork": {
+        front_default: string | null;
+        front_shiny: string | null;
+      };
+    };
   };
+  abilities: {
+    is_hidden: boolean;
+    slot: number;
+    ability: NamedAPIResource;
+  }[];
   stats: {
     base_stat: number;
     stat: NamedAPIResource;
@@ -54,11 +65,21 @@ export type PokemonSpecies = {
     is_default: boolean;
     pokemon: NamedAPIResource;
   }[];
+  genera: {
+    genus: string;
+    language: NamedAPIResource;
+  }[];
+  flavor_text_entries: {
+    flavor_text: string;
+    language: NamedAPIResource;
+    version: NamedAPIResource;
+  }[];
 };
 
 export type Generation = {
   id: number;
   name: string;
+  main_region: NamedAPIResource;
   pokemon_species: NamedAPIResource[];
 };
 

@@ -10,7 +10,7 @@ type CatchPanelProps = {
 };
 
 const MESSAGE_STYLES = {
-  caught: "text-emerald-700 dark:text-emerald-400",
+  caught: "text-green-700 dark:text-green-400",
   escaped: "text-amber-700 dark:text-amber-400",
   error: "text-red-700 dark:text-red-400",
 };
@@ -19,21 +19,21 @@ export function CatchPanel({ caught, chancePercent, throwAction }: CatchPanelPro
   const [result, formAction, pending] = useActionState(throwAction, null);
 
   return (
-    <div className="mt-4 flex flex-col items-center gap-2 text-center">
+    <div className="flex flex-col items-start gap-2">
       {caught ? (
-        <p className="rounded-full bg-emerald-100 px-3 py-1 text-sm font-medium text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
-          ✓ In your Pokédex
+        <p className="inline-flex items-center gap-2 rounded-full bg-green-100 px-3 py-1.5 text-sm font-medium text-green-800 dark:bg-green-950/60 dark:text-green-300">
+          <span aria-hidden>✓</span> In your Pokédex
         </p>
       ) : (
-        <form action={formAction} className="flex flex-col items-center gap-1">
+        <form action={formAction} className="flex flex-wrap items-center gap-3">
           <button
             type="submit"
             disabled={pending}
-            className="rounded-full bg-red-600 px-5 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:cursor-wait disabled:opacity-60"
+            className="rounded-full bg-red-500 px-5 py-2 text-sm font-semibold text-white shadow-sm shadow-red-500/30 transition hover:bg-red-600 disabled:cursor-wait disabled:opacity-60"
           >
-            {pending ? "Throwing…" : "Throw Pokéball"}
+            {pending ? "Throwing…" : "Catch"}
           </button>
-          <p className="text-xs text-zinc-500">{chancePercent}% catch chance</p>
+          <span className="text-xs text-zinc-500">{chancePercent}% catch chance</span>
         </form>
       )}
 

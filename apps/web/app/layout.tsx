@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Suspense } from "react";
+import { HeaderNav, HeaderNavLinks } from "@/components/nav-link";
 import { SearchBox } from "@/components/search-box";
 import "./globals.css";
 
@@ -16,11 +18,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Pokédex",
-  description: "Your personal Pokédex",
+  description: "A clean Pokédex: stats, type defenses and evolutions at a glance.",
 };
-
-const NAV_LINK_STYLE =
-  "text-sm text-zinc-600 hover:text-black dark:text-zinc-400 dark:hover:text-white";
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
@@ -28,22 +27,29 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-zinc-50 dark:bg-black">
-        <header className="border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
-          <nav className="mx-auto flex w-full max-w-5xl items-center gap-6 px-4 py-3">
-            <Link href="/" className="text-lg font-bold">
-              Pokédex
+      <body className="flex min-h-full flex-col bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
+        <header className="sticky top-0 z-20 border-b border-zinc-200/80 bg-white/80 backdrop-blur-md dark:border-zinc-800/80 dark:bg-zinc-950/80">
+          <div className="mx-auto flex h-14 w-full max-w-6xl items-center gap-2 px-4 sm:gap-4">
+            <Link href="/" className="mr-1 flex items-center gap-2 font-semibold tracking-tight">
+              <span aria-hidden className="h-5 w-5 rounded-full border-[5px] border-red-500" />
+              <span className="hidden sm:inline">Pokédex</span>
             </Link>
-            <Link href="/" className={NAV_LINK_STYLE}>
-              All Pokémon
-            </Link>
-            <Link href="/pokedex" className={NAV_LINK_STYLE}>
-              My Pokémon
-            </Link>
+            <Suspense fallback={<HeaderNavLinks pathname={null} />}>
+              <HeaderNav />
+            </Suspense>
             <SearchBox />
-          </nav>
+          </div>
         </header>
-        {children}
+
+        <div className="flex-1">{children}</div>
+
+        <footer className="border-t border-zinc-200 py-6 text-center text-xs text-zinc-500 dark:border-zinc-800">
+          Data from{" "}
+          <a href="https://pokeapi.co" className="underline underline-offset-2 hover:text-zinc-900 dark:hover:text-white">
+            PokéAPI
+          </a>
+          . A non-commercial fan project, not affiliated with Nintendo.
+        </footer>
       </body>
     </html>
   );
