@@ -1,5 +1,5 @@
 import { config } from "dotenv";
-import { defineConfig, env } from "prisma/config";
+import { defineConfig } from "prisma/config";
 
 // The .env file lives in the repository root and is shared by every app.
 config({ path: "../../.env", quiet: true });
@@ -10,6 +10,7 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: env("DATABASE_URL"),
+    // Optional so "prisma generate" works without a database (e.g. on Vercel).
+    url: process.env.DATABASE_URL,
   },
 });

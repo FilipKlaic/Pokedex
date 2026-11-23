@@ -74,7 +74,7 @@ async function PokemonDetails({ params }: Pick<PageProps<"/pokemon/[name]">, "pa
             <Artwork
               src={artwork.front_shiny ?? pokemon.sprites.front_shiny}
               alt={`Shiny ${formatName(pokemon.name)}`}
-              size={112}
+              size={180}
               caption="✨ Shiny"
             />
           </div>

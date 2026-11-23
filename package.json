@@ -12,6 +12,7 @@
     "cli": "npm run build:core && npm run dev -w @pokedex/cli",
     "web": "npm run build:core && npm run dev -w @pokedex/web",
     "db:migrate": "npm run db:migrate -w @pokedex/core --",
+    "db:deploy": "npm run db:deploy -w @pokedex/core",
     "db:generate": "npm run db:generate -w @pokedex/core",
     "db:studio": "npm run db:studio -w @pokedex/core",
     "watch:core": "tsc --watch -p packages/core"

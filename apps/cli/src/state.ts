@@ -1,7 +1,7 @@
 import { createInterface, type Interface } from "node:readline";
 import { PokeAPI } from "@pokedex/core/api/pokeapi";
 import { getCommands } from "./commands/registry.js";
-import { prisma } from "@pokedex/core/db/client";
+import { getPrisma } from "@pokedex/core/db/client";
 import { PokedexRepository } from "@pokedex/core/db/pokedex";
 import type { PrismaClient } from "@pokedex/core/generated/prisma/client";
 
@@ -27,6 +27,8 @@ export function initState(): State {
     output: process.stdout,
     prompt: "Pokédex > ",
   });
+
+  const prisma = getPrisma();
 
   return {
     rl,
