@@ -60,6 +60,7 @@ export type Pokemon = {
 export type PokemonSpecies = {
   id: number;
   name: string;
+  capture_rate: number;
   evolution_chain: { url: string } | null;
   varieties: {
     is_default: boolean;

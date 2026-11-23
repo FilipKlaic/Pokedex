@@ -70,12 +70,13 @@ async function PokemonDetails({ params }: Pick<PageProps<"/pokemon/[name]">, "pa
               src={artwork.front_default ?? pokemon.sprites.front_default}
               alt={formatName(pokemon.name)}
               size={224}
+              caption="Normal"
             />
             <Artwork
               src={artwork.front_shiny ?? pokemon.sprites.front_shiny}
               alt={`Shiny ${formatName(pokemon.name)}`}
               size={180}
-              caption="✨ Shiny"
+              caption="✨Shiny"
             />
           </div>
 
@@ -110,7 +111,7 @@ async function PokemonDetails({ params }: Pick<PageProps<"/pokemon/[name]">, "pa
 
             <CatchPanel
               caught={caught}
-              chancePercent={Math.round(catchChance(pokemon.base_experience) * 100)}
+              chancePercent={Math.round(catchChance(species.captureRate) * 100)}
               throwAction={throwPokeball.bind(null, pokemon.name)}
             />
           </div>

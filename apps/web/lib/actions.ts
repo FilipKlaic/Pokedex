@@ -3,7 +3,7 @@
 import { refresh } from "next/cache";
 import { catchChance, rollCatch } from "@pokedex/core/logic/catching";
 import { formatName } from "./format";
-import { getPokemon } from "./pokeapi";
+import { getPokemon, getSpeciesDetails } from "./pokeapi";
 import { addToPokedex, isCaught } from "./pokedex";
 
 export type CatchResult = {
@@ -32,7 +32,9 @@ export async function throwPokeball(
     return { outcome: "caught", message: `${displayName} is already in your Pokédex.` };
   }
 
-  if (!rollCatch(catchChance(pokemon.base_experience))) {
+  const species = await getSpeciesDetails(pokemon.species.name);
+  
+  if (!rollCatch(catchChance(species.captureRate))) {
     return { outcome: "escaped", message: `Oh no! ${displayName} broke free. Try again!` };
   }
 

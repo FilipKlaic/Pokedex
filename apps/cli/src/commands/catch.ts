@@ -15,7 +15,8 @@ export async function commandCatch(state: State, ...args: string[]): Promise<voi
   }
 
   const pokemon = await state.pokeAPI.fetchPokemon(pokemonName);
-  const chance = catchChance(pokemon.base_experience);
+  const species = await state.pokeAPI.fetchSpecies(pokemon.species.name);
+  const chance = catchChance(species.capture_rate);
 
   console.log(`Throwing a Pokéball at ${pokemon.name}... (${Math.round(chance * 100)}% chance)`);
 
