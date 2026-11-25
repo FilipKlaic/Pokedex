@@ -16,8 +16,10 @@ Teams are stored in a PostgreSQL database. Pokémon data comes from the free
 |---|---|
 | Language | TypeScript |
 | Web app | Next.js 16 (App Router), React 19, Tailwind CSS 4 |
-| Database | PostgreSQL 17, running in Docker |
+| UI components | Mantine 9 (modals, menus, inputs) |
+| Database | PostgreSQL 17: in Docker locally, Prisma Postgres in production |
 | Database access | Prisma ORM 7 |
+| Hosting | Vercel |
 | Containers | Rancher Desktop (or any Docker setup) |
 | Project layout | npm workspaces (monorepo) |
 
@@ -55,7 +57,7 @@ Run these commands from the project root (the folder containing this README).
 npm install
 ```
 
-This installs the packages for all three parts of the project in one go.
+This installs the packages for both parts of the project (`packages/core` and `apps/web`) in one go.
 
 > If npm warns that install scripts for `prisma` and `@prisma/engines` aren't approved, approve
 > them and install again. Prisma needs these scripts to download its database engine.
@@ -122,11 +124,57 @@ Then open [http://localhost:3000](http://localhost:3000).
 | `npm run watch:core` | Rebuilds the shared code automatically on every save |
 | `npm run db:generate` | Regenerates the Prisma client after a schema change |
 | `npm run db:migrate` | Applies migrations, or creates a new one after a schema change |
+| `npm run db:deploy` | Applies existing migrations without creating new ones (used for production) |
 | `npm run db:studio` | Opens Prisma Studio, a browser view of the database |
 
 The web app uses the **compiled** version of `packages/core`. If you change code in
 `packages/core` while the app is running, run `npm run build:core` (or keep `npm run watch:core`
 running) and restart the app.
+
+## Adding a new game
+
+The games you can build teams for are listed by hand in
+[`packages/core/src/logic/games.ts`](packages/core/src/logic/games.ts). Each entry has the game's
+PokéAPI version group (e.g. `scarlet-violet`), its versions with the Pokédex number of the Pokémon
+on the box and a color, and any DLC version groups. Check
+[pokeapi.co/api/v2/version-group](https://pokeapi.co/api/v2/version-group?limit=100) for the
+exact version group names.
+
+Whether a Pokémon is in a game comes from PokéAPI's move data: a Pokémon only has moves listed for
+the games it's actually in. A brand-new game may not have that data in PokéAPI yet.
+
+## Deploying to Vercel
+
+The live site runs on Vercel, with a Prisma Postgres database. Every push to `main` deploys
+automatically. Vercel reads the database connection from the `DATABASE_URL` environment variable
+in the project settings.
+
+**Vercel doesn't update the database.** After pushing a change that adds a migration (a new
+folder in `packages/core/prisma/migrations`), apply it to the production database yourself:
+
+1. Push, and wait until the deployment shows **Ready** in Vercel. If the build fails, the
+   database stays untouched.
+2. Copy the `DATABASE_URL` value from Vercel (*Settings → Environment Variables*). Use the
+   direct URL, not `DATABASE_URL_POOLED`.
+3. Run the migrations against it, then remove the variable again:
+
+   ```
+   # Windows (PowerShell)
+   $env:DATABASE_URL = 'postgres://...'
+   npm run db:deploy
+   Remove-Item Env:DATABASE_URL
+
+   # macOS / Linux
+   DATABASE_URL='postgres://...' npm run db:deploy
+   ```
+
+The output should name the production host (`db.prisma.io`), not `localhost`, and end with
+*All migrations have been successfully applied*. Until this step runs, creating a team on the live
+site fails with *The table public.Team does not exist*.
+
+In PowerShell, the variable stays set until you remove it or close the terminal, and every
+database command in that window goes to production until then, including `npm run web`. Never
+put the production connection string in `.env` or anywhere else in the repository.
 
 ## Troubleshooting
 
@@ -142,7 +190,8 @@ Another program, often a locally installed PostgreSQL, is using port 5432. In
 Run `npm run db:generate`.
 
 **`The table public.Team does not exist`**
-Run `npm run db:migrate`.
+Locally: run `npm run db:migrate`. On the live site: the production database is missing a
+migration. See [Deploying to Vercel](#deploying-to-vercel).
 
 **`fetch failed` with `UNABLE_TO_GET_ISSUER_CERT_LOCALLY` or `SELF_SIGNED_CERT_IN_CHAIN`**
 Your network (often a company network) inspects HTTPS traffic, and Node doesn't trust its
