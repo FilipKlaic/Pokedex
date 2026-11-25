@@ -5,22 +5,23 @@ import { TypeBadge } from "./type-badge";
 type PokemonTileProps = {
   id: number;
   name: string;
-  caught: boolean;
-  /** Shown under the name when known (e.g. on My Pokémon). */
+  /** Whether it's on one of the visitor's teams. */
+  onTeam: boolean;
+  /** Shown under the name when known. */
   types?: string[];
 };
 
-export function PokemonTile({ id, name, caught, types }: PokemonTileProps) {
+export function PokemonTile({ id, name, onTeam, types }: PokemonTileProps) {
   return (
     <article className="group relative flex h-full flex-col items-center rounded-2xl border border-zinc-200 bg-white p-3 pb-4 transition duration-200 hover:-translate-y-0.5 hover:border-zinc-300 hover:shadow-lg hover:shadow-zinc-900/5 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700">
       <div className="flex w-full items-center justify-between">
         <span className="font-mono text-[11px] text-zinc-400">{formatNumber(id)}</span>
-        {caught && (
+        {onTeam && (
           <span
             className="flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white"
-            title="In your Pokédex"
+            title="On one of your teams"
           >
-            ✓<span className="sr-only">In your Pokédex</span>
+            ✓<span className="sr-only">On one of your teams</span>
           </span>
         )}
       </div>

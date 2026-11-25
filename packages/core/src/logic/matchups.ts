@@ -26,19 +26,3 @@ export function defensiveMultipliers(defendingTypes: TypeInfo[]): Map<string, nu
 
   return multipliers;
 }
-
-/**
- * Groups attacking types by multiplier, e.g. 2 → ["electric", "water"].
- * Neutral (1×) matchups are left out.
- */
-export function groupByMultiplier(multipliers: Map<string, number>): Map<number, string[]> {
-  return [...multipliers].reduce((groups, [typeName, multiplier]) => {
-    if (multiplier === 1) {
-      return groups;
-    }
-    const names = groups.get(multiplier) ?? [];
-    names.push(typeName);
-    groups.set(multiplier, names);
-    return groups;
-  }, new Map<number, string[]>());
-}

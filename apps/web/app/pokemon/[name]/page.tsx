@@ -4,14 +4,13 @@ import { notFound } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
 import type { Pokemon } from "@pokedex/core/api/types";
 import { idFromResourceURL } from "@pokedex/core/api/urls";
-import { catchChance } from "@pokedex/core/logic/catching";
-import { CatchPanel } from "@/components/catch-panel";
+import { gamesWithPokemon } from "@pokedex/core/logic/games";
+import { AddToTeam } from "@/components/add-to-team";
 import { EvolutionChain } from "@/components/evolution-chain";
 import { DetailSkeleton } from "@/components/skeletons";
 import { StatBars } from "@/components/stat-bars";
 import { TypeBadge } from "@/components/type-badge";
 import { TypeDefenseChart } from "@/components/type-defense-chart";
-import { throwPokeball } from "@/lib/actions";
 import { formatName, formatNumber } from "@/lib/format";
 import {
   getNeighbors,
@@ -20,7 +19,7 @@ import {
   getTypeDefenses,
   type PokemonSummary,
 } from "@/lib/pokeapi";
-import { isCaught } from "@/lib/pokedex";
+import { listMyTeams } from "@/lib/teams";
 import { typeColor } from "@/lib/type-colors";
 
 export default function PokemonPage({ params }: PageProps<"/pokemon/[name]">) {
@@ -43,11 +42,11 @@ async function PokemonDetails({ params }: Pick<PageProps<"/pokemon/[name]">, "pa
 
   const typeNames = pokemon.types.map((t) => t.type.name);
   const speciesId = idFromResourceURL(pokemon.species.url);
-  const [species, defenses, neighbors, caught] = await Promise.all([
+  const [species, defenses, neighbors, teams] = await Promise.all([
     getSpeciesDetails(pokemon.species.name),
     getTypeDefenses(typeNames),
     getNeighbors(speciesId),
-    isCaught(pokemon.name),
+    listMyTeams(),
   ]);
 
   const [firstColor, secondColor = firstColor] = typeNames.map(typeColor);
@@ -109,10 +108,10 @@ async function PokemonDetails({ params }: Pick<PageProps<"/pokemon/[name]">, "pa
               </Fact>
             </dl>
 
-            <CatchPanel
-              caught={caught}
-              chancePercent={Math.round(catchChance(species.captureRate) * 100)}
-              throwAction={throwPokeball.bind(null, pokemon.name)}
+            <AddToTeam
+              pokemon={{ id: pokemon.id, name: pokemon.name }}
+              availableGameIds={gamesWithPokemon(pokemon)}
+              teams={teams}
             />
           </div>
         </div>

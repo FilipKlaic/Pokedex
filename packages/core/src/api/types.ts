@@ -10,21 +10,6 @@ export type NamedAPIResourceList = {
   results: NamedAPIResource[];
 };
 
-export type ShallowLocations = {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: NamedAPIResource[];
-};
-
-export type LocationArea = {
-  id: number;
-  name: string;
-  pokemon_encounters: {
-    pokemon: NamedAPIResource;
-  }[];
-};
-
 export type Pokemon = {
   id: number;
   name: string;
@@ -55,12 +40,20 @@ export type Pokemon = {
     slot: number;
     type: NamedAPIResource;
   }[];
+  /** Every move it can learn, with the games (version groups) it learns it in. */
+  moves: {
+    move: NamedAPIResource;
+    version_group_details: {
+      level_learned_at: number;
+      move_learn_method: NamedAPIResource;
+      version_group: NamedAPIResource;
+    }[];
+  }[];
 };
 
 export type PokemonSpecies = {
   id: number;
   name: string;
-  capture_rate: number;
   evolution_chain: { url: string } | null;
   varieties: {
     is_default: boolean;

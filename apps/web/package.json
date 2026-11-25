@@ -9,6 +9,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@mantine/core": "9.8.2",
+    "@mantine/hooks": "9.8.2",
     "@pokedex/core": "*",
     "next": "16.4.6",
     "react": "19.3.0",

@@ -2,11 +2,9 @@ import { Cache } from "./cache.js";
 import type {
   EvolutionChain,
   Generation,
-  LocationArea,
   NamedAPIResourceList,
   Pokemon,
   PokemonSpecies,
-  ShallowLocations,
   TypeInfo,
 } from "./types.js";
 
@@ -27,16 +25,6 @@ export class PokeAPI {
 
   constructor(cacheTTLMs: number) {
     this.cache = new Cache<unknown>(cacheTTLMs);
-  }
-
-  async fetchLocations(pageURL: string | null = null): Promise<ShallowLocations> {
-    const url = pageURL ?? `${PokeAPI.baseURL}/location-area?offset=0&limit=20`;
-    return this.fetchJSON<ShallowLocations>(url);
-  }
-
-  async fetchLocationArea(areaName: string): Promise<LocationArea> {
-    const url = `${PokeAPI.baseURL}/location-area/${encodeURIComponent(areaName)}`;
-    return this.fetchJSON<LocationArea>(url);
   }
 
   async fetchPokemon(pokemonName: string): Promise<Pokemon> {

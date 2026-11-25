@@ -9,10 +9,31 @@ datasource db {
   provider = "postgresql"
 }
 
-model CaughtPokemon {
+/// A team of up to 6 Pokémon for one game.
+model Team {
+  id           Int          @id @default(autoincrement())
+  /// Random ID from the visitor's cookie. Every query filters on it, so
+  /// visitors only ever see and change their own teams.
+  ownerId      String
+  name         String
+  /// PokéAPI version group, e.g. "firered-leafgreen" or "scarlet-violet".
+  versionGroup String
+  createdAt    DateTime     @default(now())
+  members      TeamMember[]
+
+  @@index([ownerId, versionGroup])
+}
+
+/// One Pokémon in a team. The same Pokémon may appear more than once.
+model TeamMember {
   id        Int      @id @default(autoincrement())
-  name      String   @unique
+  teamId    Int
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  /// Position in the team, 1 to 6.
+  slot      Int
   pokedexId Int
-  data      Json
-  caughtAt  DateTime @default(now())
+  name      String
+  addedAt   DateTime @default(now())
+
+  @@unique([teamId, slot])
 }

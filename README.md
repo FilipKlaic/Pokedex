@@ -1,13 +1,13 @@
 # Pokédex
 
-A Pokédex written in TypeScript, with two ways to use it:
+A Pokédex web app written in TypeScript and Next.js: browse every Pokémon by generation, search
+by name, see stats, type matchups and evolutions, and build teams for the games you're playing.
 
-- **A terminal app (CLI):** explore locations, catch Pokémon and inspect them from a command prompt.
-- **A web app (Next.js):** browse every Pokémon by generation, search by name, see stats, type
-  matchups and evolutions, and catch Pokémon with a button.
+Teams belong to one game each (e.g. one for FireRed, another for Scarlet), hold up to 6 Pokémon,
+and only accept Pokémon that are actually in that game. There are no accounts: each visitor gets
+a random ID in a cookie, and only sees their own teams.
 
-Both apps share the same code and the same PostgreSQL database, so a Pokémon caught in the
-terminal shows up on the website and the other way around. Pokémon data comes from the free
+Teams are stored in a PostgreSQL database. Pokémon data comes from the free
 [PokéAPI](https://pokeapi.co), which needs no API key.
 
 ## Tech stack
@@ -24,8 +24,7 @@ terminal shows up on the website and the other way around. Pokémon data comes f
 ## Project structure
 
 ```
-packages/core/     Shared code: PokéAPI client, types, game logic, Prisma schema and database access
-apps/cli/          The terminal app
+packages/core/     PokéAPI client, types, game logic, Prisma schema and database access
 apps/web/          The Next.js web app
 docker-compose.yml The PostgreSQL database
 .env.example       Template for the .env file you create during setup
@@ -106,9 +105,7 @@ npm run db:migrate
 - `db:generate` creates the TypeScript database client from `packages/core/prisma/schema.prisma`.
 - `db:migrate` creates the tables in PostgreSQL from the migration files.
 
-### 5. Run the apps
-
-**Web app:**
+### 5. Run the app
 
 ```
 npm run web
@@ -116,31 +113,19 @@ npm run web
 
 Then open [http://localhost:3000](http://localhost:3000).
 
-**Terminal app:**
-
-```
-npm run cli
-```
-
-Type `help` to see all commands, for example `map`, `explore <area>`, `catch <pokemon>`,
-`inspect <pokemon>`, `pokedex`, `evolution <pokemon>` and `weakness <pokemon>`.
-
-You can run both at the same time in separate terminals. They use the same database.
-
 ## npm scripts
 
 | Command | What it does |
 |---|---|
 | `npm run web` | Builds the shared code, then starts the web app on port 3000 |
-| `npm run cli` | Builds the shared code, then starts the terminal app |
 | `npm run build:core` | Rebuilds the shared code in `packages/core` |
 | `npm run watch:core` | Rebuilds the shared code automatically on every save |
 | `npm run db:generate` | Regenerates the Prisma client after a schema change |
 | `npm run db:migrate` | Applies migrations, or creates a new one after a schema change |
 | `npm run db:studio` | Opens Prisma Studio, a browser view of the database |
 
-The web and terminal apps use the **compiled** version of `packages/core`. If you change code in
-`packages/core` while an app is running, run `npm run build:core` (or keep `npm run watch:core`
+The web app uses the **compiled** version of `packages/core`. If you change code in
+`packages/core` while the app is running, run `npm run build:core` (or keep `npm run watch:core`
 running) and restart the app.
 
 ## Troubleshooting
@@ -156,7 +141,7 @@ Another program, often a locally installed PostgreSQL, is using port 5432. In
 **`Cannot find module '.../generated/prisma/client.js'`**
 Run `npm run db:generate`.
 
-**`The table public.CaughtPokemon does not exist`**
+**`The table public.Team does not exist`**
 Run `npm run db:migrate`.
 
 **`fetch failed` with `UNABLE_TO_GET_ISSUER_CERT_LOCALLY` or `SELF_SIGNED_CERT_IN_CHAIN`**
@@ -185,7 +170,7 @@ Run `npm run build:core`. If they stay, open the Command Palette and run
 | `docker compose stop` | Stops the database, keeps your data |
 | `docker compose start` | Starts it again |
 | `docker compose down` | Removes the container, keeps your data in the volume |
-| `docker compose down -v` | Removes the container **and deletes all caught Pokémon** |
+| `docker compose down -v` | Removes the container **and deletes all teams** |
 
 ## Credits
 

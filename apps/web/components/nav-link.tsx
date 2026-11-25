@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 
 const LINKS = [
   { href: "/", label: "Browse" },
-  { href: "/pokedex", label: "My Pokémon" },
+  { href: "/teams", label: "My teams" },
 ];
 
 /** The header links, with the current page highlighted. */

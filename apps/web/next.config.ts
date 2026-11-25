@@ -21,6 +21,10 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // "My Pokémon" was replaced by "My teams"; keep old links and bookmarks working.
+  async redirects() {
+    return [{ source: "/pokedex", destination: "/teams", permanent: false }];
+  },
   turbopack: {
     rules: {
       "*.css": {

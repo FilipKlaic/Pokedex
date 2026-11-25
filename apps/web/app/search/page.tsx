@@ -6,7 +6,7 @@ import { PokemonGrid } from "@/components/pokemon-grid";
 import { GridSkeleton } from "@/components/skeletons";
 import { TypeFilter } from "@/components/type-filter";
 import { getAllPokemon, getPokemonOfType } from "@/lib/pokeapi";
-import { listCaughtNames } from "@/lib/pokedex";
+import { listMyTeamPokemonIds } from "@/lib/teams";
 
 const MAX_RESULTS = 200;
 
@@ -65,10 +65,10 @@ async function SearchResults({ searchParams }: Pick<PageProps<"/search">, "searc
 }
 
 async function Results({ query, type }: { query: string; type: PokemonTypeName | null }) {
-  const [allPokemon, ofType, caughtNames] = await Promise.all([
+  const [allPokemon, ofType, teamPokemonIds] = await Promise.all([
     getAllPokemon(),
     type ? getPokemonOfType(type) : null,
-    listCaughtNames(),
+    listMyTeamPokemonIds(),
   ]);
 
   // Start with every Pokémon, then narrow it down by each active filter.
@@ -89,7 +89,7 @@ async function Results({ query, type }: { query: string; type: PokemonTypeName |
           : `${results.length} ${results.length === 1 ? "match" : "matches"}`}
       </p>
       {results.length > 0 ? (
-        <PokemonGrid pokemon={results} caughtNames={caughtNames} />
+        <PokemonGrid pokemon={results} teamPokemonIds={teamPokemonIds} />
       ) : (
         <div className="rounded-3xl border border-dashed border-zinc-300 p-10 text-center text-sm text-zinc-500 dark:border-zinc-700">
           No Pokémon match these filters.

@@ -9,7 +9,6 @@
   ],
   "scripts": {
     "build:core": "npm run build -w @pokedex/core",
-    "cli": "npm run build:core && npm run dev -w @pokedex/cli",
     "web": "npm run build:core && npm run dev -w @pokedex/web",
     "db:migrate": "npm run db:migrate -w @pokedex/core --",
     "db:deploy": "npm run db:deploy -w @pokedex/core",

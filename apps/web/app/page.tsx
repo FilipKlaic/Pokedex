@@ -4,7 +4,7 @@ import { GenerationTabs } from "@/components/generation-tabs";
 import { PokemonGrid } from "@/components/pokemon-grid";
 import { GridSkeleton } from "@/components/skeletons";
 import { getGenerationPokemon, getGenerations } from "@/lib/pokeapi";
-import { listCaughtNames } from "@/lib/pokedex";
+import { listMyTeamPokemonIds } from "@/lib/teams";
 
 export default function HomePage({ searchParams }: PageProps<"/">) {
   return (
@@ -31,10 +31,10 @@ async function GenerationBrowser({ searchParams }: Pick<PageProps<"/">, "searchP
   const { gen } = await searchParams;
   const generation = parseGeneration(gen);
 
-  const [generations, pokemon, caughtNames] = await Promise.all([
+  const [generations, pokemon, teamPokemonIds] = await Promise.all([
     getGenerations(),
     getGenerationPokemon(generation),
-    listCaughtNames(),
+    listMyTeamPokemonIds(),
   ]);
 
   if (!pokemon) {
@@ -52,8 +52,8 @@ async function GenerationBrowser({ searchParams }: Pick<PageProps<"/">, "searchP
   }
 
   const current = generations.find((entry) => entry.id === generation);
-  const caught = new Set(caughtNames);
-  const caughtHere = pokemon.filter((entry) => caught.has(entry.name)).length;
+  const onTeams = new Set(teamPokemonIds);
+  const onTeamsHere = pokemon.filter((entry) => onTeams.has(entry.id)).length;
 
   return (
     <>
@@ -63,12 +63,14 @@ async function GenerationBrowser({ searchParams }: Pick<PageProps<"/">, "searchP
           {current?.region}{" "}
           <span className="text-sm font-normal text-zinc-500">{current?.label}</span>
         </h2>
-        <p className="text-sm text-zinc-500">
-          <span className="font-medium text-zinc-900 dark:text-white">{caughtHere}</span> /{" "}
-          {pokemon.length} caught
-        </p>
+        {onTeamsHere > 0 && (
+          <p className="text-sm text-zinc-500">
+            <span className="font-medium text-zinc-900 dark:text-white">{onTeamsHere}</span> on
+            your teams
+          </p>
+        )}
       </div>
-      <PokemonGrid pokemon={pokemon} caughtNames={caughtNames} />
+      <PokemonGrid pokemon={pokemon} teamPokemonIds={teamPokemonIds} />
     </>
   );
 }

@@ -26,7 +26,6 @@ export type SpeciesDetails = {
   flavorText: string | null;
   /** The root of the evolution tree, or null if there is none. */
   evolution: ChainLink | null;
-  captureRate: number;
 };
 
 export type TypeDefense = {
@@ -134,7 +133,7 @@ export async function getSpeciesDetails(speciesName: string): Promise<SpeciesDet
     ? (await api.fetchEvolutionChain(species.evolution_chain.url)).chain
     : null;
 
-  return { genus, flavorText, evolution, captureRate: species.capture_rate };
+  return { genus, flavorText, evolution };
 }
 
 /** How much damage this Pokémon takes from each of the 18 attacking types. */
